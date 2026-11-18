@@ -40,16 +40,15 @@ module tt_um_mux4to1 (
 endmodule
 
 // 원본 2비트 4:1 MUX 모듈
-module top(d0, d1, d2, d3, addr0, addr1, out);
-    
-    // Module arguments
-    input wire  [1:0] d0;
-    input wire  [1:0] d1;
-    input wire  [1:0] d2;
-    input wire  [1:0] d3;
-    input wire  addr0;
-    input wire  addr1;
-    output reg  [1:0] out;
+module top(
+    input wire  [1:0] d0,
+    input wire  [1:0] d1,
+    input wire  [1:0] d2,
+    input wire  [1:0] d3,
+    input wire  addr0,
+    input wire  addr1,
+    output reg  [1:0] out
+);
     
     // Local signals
     reg  [1:0] mux0;

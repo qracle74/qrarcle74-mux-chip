@@ -13,22 +13,22 @@ async def test_mux(dut):
 
     # addr = 00 -> d0 (00) 출력 확인
     dut.uio_in.value = 0
-    await Timer(10, units="ns")
-    assert (dut.uo_out.value & 0x03) == 0
+    await Timer(10, unit="ns")
+    assert (dut.uo_out.value.to_unsigned() & 0x03) == 0
 
     # addr = 01 -> d1 (01) 출력 확인
     dut.uio_in.value = 1
-    await Timer(10, units="ns")
-    assert (dut.uo_out.value & 0x03) == 1
+    await Timer(10, unit="ns")
+    assert (dut.uo_out.value.to_unsigned() & 0x03) == 1
 
     # addr = 10 -> d2 (10) 출력 확인
     dut.uio_in.value = 2
-    await Timer(10, units="ns")
-    assert (dut.uo_out.value & 0x03) == 2
+    await Timer(10, unit="ns")
+    assert (dut.uo_out.value.to_unsigned() & 0x03) == 2
 
     # addr = 11 -> d3 (11) 출력 확인
     dut.uio_in.value = 3
-    await Timer(10, units="ns")
-    assert (dut.uo_out.value & 0x03) == 3
+    await Timer(10, unit="ns")
+    assert (dut.uo_out.value.to_unsigned() & 0x03) == 3
 
     dut._log.info("All MUX tests passed!")

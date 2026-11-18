@@ -1,40 +1,34 @@
-# SPDX-FileCopyrightText: © 2024 Tiny Tapeout
-# SPDX-License-Identifier: Apache-2.0
-
 import cocotb
-from cocotb.clock import Clock
-from cocotb.triggers import ClockCycles
-
+from cocotb.triggers import Timer
 
 @cocotb.test()
-async def test_project(dut):
-    dut._log.info("Start")
+async def test_mux(dut):
+    dut._log.info("Start 4:1 MUX test")
 
-    # Set the clock period to 10 us (100 KHz)
-    clock = Clock(dut.clk, 10, unit="us")
-    cocotb.start_soon(clock.start())
-
-    # Reset
-    dut._log.info("Reset")
+    # 데이터 입력 설정: d0=00(0), d1=01(1), d2=10(2), d3=11(3) -> 8'b11_10_01_00 = 0xE4
+    dut.ui_in.value = 0xE4
     dut.ena.value = 1
-    dut.ui_in.value = 0
-    dut.uio_in.value = 0
-    dut.rst_n.value = 0
-    await ClockCycles(dut.clk, 10)
+    dut.clk.value = 0
     dut.rst_n.value = 1
 
-    dut._log.info("Test project behavior")
+    # addr = 00 -> d0 (00) 출력 확인
+    dut.uio_in.value = 0
+    await Timer(10, units="ns")
+    assert (dut.uo_out.value & 0x03) == 0
 
-    # Set the input values you want to test
-    dut.ui_in.value = 20
-    dut.uio_in.value = 30
+    # addr = 01 -> d1 (01) 출력 확인
+    dut.uio_in.value = 1
+    await Timer(10, units="ns")
+    assert (dut.uo_out.value & 0x03) == 1
 
-    # Wait for one clock cycle to see the output values
-    await ClockCycles(dut.clk, 1)
+    # addr = 10 -> d2 (10) 출력 확인
+    dut.uio_in.value = 2
+    await Timer(10, units="ns")
+    assert (dut.uo_out.value & 0x03) == 2
 
-    # The following assersion is just an example of how to check the output values.
-    # Change it to match the actual expected output of your module:
-    assert dut.uo_out.value == 50
+    # addr = 11 -> d3 (11) 출력 확인
+    dut.uio_in.value = 3
+    await Timer(10, units="ns")
+    assert (dut.uo_out.value & 0x03) == 3
 
-    # Keep testing the module by changing the input values, waiting for
-    # one or more clock cycles, and asserting the expected output values.
+    dut._log.info("All MUX tests passed!")
